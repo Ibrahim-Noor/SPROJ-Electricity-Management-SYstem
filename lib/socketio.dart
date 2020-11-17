@@ -38,7 +38,7 @@ class SocketUtil {
     this.socket = socket;
   }
 
-  disconnect(String identifier) async {
+  disconnect() async {
     await manager.clearInstance(socket);
     // setState(() => _isProbablyConnected[identifier] = false);
   }

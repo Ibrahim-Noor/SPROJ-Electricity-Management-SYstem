@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:web_socket/changeUsageLImit.dart';
+import 'package:web_socket/roomUsageData.dart';
+
 import 'Globals.dart' as G;
 
 import 'package:flutter/material.dart';
@@ -49,6 +52,7 @@ class _HomeScreen extends State<HomeScreen> {
   Map<String, double> unitsInfo;
   Map<String, double> billInfo;
   List<Color> colorList;
+  // Map<String, dynamic> usage;
 
   _HomeScreen() {
     unitsInfo = {
@@ -86,15 +90,6 @@ class _HomeScreen extends State<HomeScreen> {
     // getPowerData();
     G.socketUtil.sendMessage("house_number", [1]);
     getData();
-    G.socketUtil.socket.on("usage", (data) {
-      if (data is Map) {
-        data = json.encode(data);
-        print(data);
-      }
-      // this.setState(() {
-
-      // });
-    });
   }
 
   Future<void> getData() async {
@@ -102,17 +97,24 @@ class _HomeScreen extends State<HomeScreen> {
       // data = json.encode(data);
       // print(data["AC_DR_kW"].runtimeType);
       // print(this.currentElectricityUsage.runtimeType);
-      print(data);
+      // print(data);
       // print("data");
+      // print("dasdsa");
+      // print(this.dataLoading);
       this.setState(() {
         // print(this.dataa);
-        this.currentElectricityUsage = double.parse(data["Usage_kW"]);
+        // this.usage = data;
+        G.globalMap = data;
+        this.currentElectricityUsage = double.parse(G.globalMap["Usage_kW"]);
         this.electricityUsed += this.currentElectricityUsage;
+        this.dataLoading = false;
         // print(":ads");
         // print(this.currentElectricityUsage);
-        this.dataLoading = false;
       });
     });
+    // this.setState(() {
+
+    // });
   }
 
   @override
@@ -128,38 +130,78 @@ class _HomeScreen extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(238, 238, 238, 1),
       appBar: AppBar(
+        // actions: [
+        //   RaisedButton(
+
+        // ],
         // Here we take flutter cleanthe value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text("EMS"),
+        title: Text(
+          "Electricity Management System",
+          style: TextStyle(fontSize: 19),
+        ),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(145, 200, 255, 1),
+        actions: [
+          Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: GestureDetector(
+                onTap: () async {
+                  var result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChangeLimitScreen()));
+                  if (result) {
+                    this.setState(() {
+                      this.usageLimit = G.userUsageLimit;
+                    });
+                  }
+                },
+                child: Icon(
+                  Icons.settings,
+                  size: 25,
+                ),
+              ))
+        ],
       ),
       body: this.dataLoading
           ? Center(child: CircularProgressIndicator())
           : ListView(
               // mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey, spreadRadius: 5, blurRadius: 10),
-                    ],
-                  ),
-                  margin: const EdgeInsets.only(top: 15.0),
-                  alignment: Alignment.center,
-                  height: MediaQuery.of(context).size.height * 0.1,
-                  width: MediaQuery.of(context).size.width,
-                  child: Text(
-                    'Usage: ' +
-                        this.currentElectricityUsage.toString() +
-                        " KWH",
-                    style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey),
+                MaterialButton(
+                  minWidth: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.all(0),
+                  onPressed: () => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RoomUsageData()),
+                    ),
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey,
+                            spreadRadius: 5,
+                            blurRadius: 10),
+                      ],
+                    ),
+                    margin: const EdgeInsets.only(top: 15.0),
+                    alignment: Alignment.center,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    width: MediaQuery.of(context).size.width,
+                    child: Text(
+                      'Usage: ' +
+                          this.currentElectricityUsage.toString() +
+                          " KWH",
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey),
+                    ),
                   ),
                 ),
                 Container(

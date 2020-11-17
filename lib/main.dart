@@ -1,5 +1,6 @@
 // import 'dart:js';
 import 'package:web_socket/homeScreen.dart';
+import 'package:web_socket/roomUsageData.dart';
 
 import 'Globals.dart' as G;
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ Future<void> main() async {
     MaterialApp(initialRoute: '/', routes: {
       '/': (context) => LoginScreen(),
       '/mainScreen': (context) => HomeScreen(),
+      '/roomUsageScreen': (context) => RoomUsageData(),
     }),
   );
 }

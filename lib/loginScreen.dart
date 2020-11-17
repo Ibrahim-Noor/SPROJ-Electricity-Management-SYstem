@@ -51,10 +51,11 @@ class _LoginScreen extends State<LoginScreen> {
                         padding: EdgeInsets.all(10),
                         child: Text(
                           "Electricity Management System",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                               color: Colors.blue,
                               fontWeight: FontWeight.w500,
-                              fontSize: 30),
+                              fontSize: 22),
                         )),
                     Container(
                         alignment: Alignment.center,
