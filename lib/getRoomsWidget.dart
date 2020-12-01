@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 String getRoomName(String shortName) {
   String result;
   if (shortName == "BR1") {
-    result = 'BedRoom 1';
+    result = 'Bedroom 1';
   } else if (shortName == "GR") {
     result = 'Game Room';
   } else if (shortName == "MB") {
@@ -19,7 +19,7 @@ String getRoomName(String shortName) {
   } else if (shortName == "Reg") {
     result = "Regular";
   } else if (shortName == "BR") {
-    result = "BedRoom";
+    result = "Bedroom";
   } else if (shortName == "DNR") {
     result = "Dining Room";
   } else if (shortName == "DR") {
@@ -27,7 +27,9 @@ String getRoomName(String shortName) {
   } else if (shortName == "UPS") {
     result = "UPS";
   } else if (shortName == "MBR") {
-    result = "Main BedRoom";
+    result = "Main Bedroom";
+  } else if (shortName == "LR") {
+    result = "Living Room";
   } else {
     result = shortName;
   }
@@ -90,10 +92,11 @@ Widget listWidgets(BuildContext context, String name, String usage,
 
 List<Widget> roomsList(Map usage, BuildContext context) {
   final children = <Widget>[];
+  print(usage.runtimeType);
   // print(usage);
   usage.forEach((key, value) {
     List a = key.split('_');
-    if (a[0] == "Usage" || a[0] == "Date") {
+    if (a[0] == "Usage" || a[0] == "Date" || key == '_id') {
     } else if (a.length > 2) {
       children.add(listWidgets(
           context, getRoomName(a[1]), double.parse(value).toString(),

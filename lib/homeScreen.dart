@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:web_socket/changeUsageLImit.dart';
 import 'package:web_socket/roomUsageData.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Globals.dart' as G;
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 // import 'package:http/http.dart' as http;
 import 'package:charts_flutter/flutter.dart' as charts;
@@ -88,33 +87,22 @@ class _HomeScreen extends State<HomeScreen> {
     // TODO: implement initState
     super.initState();
     // getPowerData();
-    G.socketUtil.sendMessage("house_number", [1]);
     getData();
   }
 
   Future<void> getData() async {
+    // SharedPreferences pref = await SharedPreferences.getInstance();
+    // var userid = pref.getString('userid');
     G.socketUtil.socket.on("message", (data) {
-      // data = json.encode(data);
-      // print(data["AC_DR_kW"].runtimeType);
-      // print(this.currentElectricityUsage.runtimeType);
+      data = json.decode(data);
       // print(data);
-      // print("data");
-      // print("dasdsa");
-      // print(this.dataLoading);
       this.setState(() {
-        // print(this.dataa);
-        // this.usage = data;
-        G.globalMap = data;
+        G.globalMap = data[0];
         this.currentElectricityUsage = double.parse(G.globalMap["Usage_kW"]);
         this.electricityUsed += this.currentElectricityUsage;
         this.dataLoading = false;
-        // print(":ads");
-        // print(this.currentElectricityUsage);
       });
     });
-    // this.setState(() {
-
-    // });
   }
 
   @override

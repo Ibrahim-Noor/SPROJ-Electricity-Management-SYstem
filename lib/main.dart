@@ -1,18 +1,12 @@
 // import 'dart:js';
 import 'package:web_socket/homeScreen.dart';
 import 'package:web_socket/roomUsageData.dart';
-
-import 'Globals.dart' as G;
 import 'package:flutter/material.dart';
-import 'package:web_socket/socketio.dart';
-
 import 'loginScreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  G.socketUtil = SocketUtil();
-  await G.socketUtil.initSocket();
-  print(G.socketUtil.socket);
+  // print(G.socketUtil.socket);
   runApp(
     MaterialApp(initialRoute: '/', routes: {
       '/': (context) => LoginScreen(),
