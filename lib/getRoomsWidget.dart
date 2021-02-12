@@ -36,82 +36,83 @@ String getRoomName(String shortName) {
   return result;
 }
 
-Widget listWidgets(BuildContext context, String name, String usage,
+Widget listWidgets(
+    BuildContext context, String name, double usage, double totalUsage,
     {String component = ""}) {
-  // return ListTile(title: Text(name),  ,)
   return Container(
     margin: EdgeInsets.fromLTRB(0, 0, 0, 7.0),
-    decoration: BoxDecoration(
-      boxShadow: [
-        BoxShadow(
-            color: Color.fromRGBO(196, 196, 196, 0.7),
-            offset: Offset(0, 1.0),
-            spreadRadius: 3.0,
-            blurRadius: 5.0)
-      ],
-      color: Color.fromRGBO(238, 239, 239, 0.8),
-      // border:
-      //     Border.all(color: Colors.black, width: 1.0, style: BorderStyle.solid),
-    ),
+    decoration: BoxDecoration(color: Colors.transparent),
     // alignment: AlignmentGeometry.lerp(),
-    height: MediaQuery.of(context).size.height * 0.3,
+    height: MediaQuery.of(context).size.height * 0.09,
     width: MediaQuery.of(context).size.width,
     child: Column(
       children: <Widget>[
         Expanded(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Text(
-                name,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35.0),
-              )
+                name + " " + component + " is on",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),
+              ),
+              Text(
+                ((usage / totalUsage) * 100).toStringAsFixed(2) + "%",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),
+              ),
             ],
           ),
         ),
-        Expanded(
-            child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Text(
-              "Usage",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
-            ),
-            component != ""
-                ? Text(
-                    component + ": " + usage + " kWs",
-                    style: TextStyle(fontSize: 20.0),
-                  )
-                : Text(usage + "kWs"),
-          ],
-        ))
       ],
     ),
   );
 }
 
+List getEachBar(String name, double usage, {String component = ""}) {
+  return [usage, name + " " + component];
+}
+
 List<Widget> roomsList(Map usage, BuildContext context) {
   final children = <Widget>[];
-  print(usage.runtimeType);
+  print(usage);
   // print(usage);
+  double totalUsage = double.parse(usage['Usage_kW']);
   usage.forEach((key, value) {
     List a = key.split('_');
     if (a[0] == "Usage" || a[0] == "Date" || key == '_id') {
     } else if (a.length > 2) {
-      children.add(listWidgets(
-          context, getRoomName(a[1]), double.parse(value).toString(),
-          component: a[0]));
+      if (double.parse(value) < 0.0001) {
+      } else {
+        children.add(listWidgets(
+            context, getRoomName(a[1]), double.parse(value), totalUsage,
+            component: a[0]));
+      }
     } else if (a.length == 2) {
-      listWidgets(context, getRoomName(a[0]), double.parse(value).toString());
+      if (double.parse(value) < 0.0001) {
+      } else {
+        listWidgets(
+            context, getRoomName(a[0]), double.parse(value), totalUsage);
+      }
     }
   });
   return children;
-  // for (var i = 0; i < listOfRoomsAbbreviation.length; i++) {
-  //   listOfRooms.add(giveRoomName(listOfRoomsAbbreviation[i]));
-  // }
-  // usage.forEach((key, value) {
-  //   if (key != "Date_Time" && key != "Usage_kW") {
-  //     children.add(listWidgets(name, usage))
-  //   }
-  // })
+}
+
+List roomBarSeries(Map usage) {
+  final children = [];
+  usage.forEach((key, value) {
+    List a = key.split('_');
+    if (a[0] == "Usage" || a[0] == "Date" || key == '_id') {
+    } else if (a.length > 2) {
+      if (double.parse(value) < 0.0001) {
+      } else {
+        children.add(getEachBar(a[1], double.parse(value), component: a[0]));
+      }
+    } else if (a.length == 2) {
+      if (double.parse(value) < 0.0001) {
+      } else {
+        children.add(getEachBar(a[0], double.parse(value)));
+      }
+    }
+  });
+  return children;
 }
